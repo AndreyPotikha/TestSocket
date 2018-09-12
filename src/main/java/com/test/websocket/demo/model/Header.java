@@ -6,16 +6,18 @@ public class Header {
     private int lengthServerStatus;
     private boolean word;
     private String siteName;
+    private boolean monitor;
 
     public Header() {
     }
 
-    public Header(String serverStatus, int time, int lengthServerStatus, boolean word, String siteName) {
+    public Header(String serverStatus, int time, int lengthServerStatus, boolean word, String siteName, boolean monitor) {
         this.serverStatus = serverStatus;
         this.time = time;
         this.lengthServerStatus = lengthServerStatus;
         this.word = word;
         this.siteName = siteName;
+        this.monitor = monitor;
     }
 
     public String getServerStatus() {
@@ -60,6 +62,14 @@ public class Header {
 
     public boolean isWord() {
         return word;
+    }
+
+    public boolean isMonitor() {
+        return monitor;
+    }
+
+    public void setMonitor(boolean monitor) {
+        this.monitor = monitor;
     }
 
     @Override

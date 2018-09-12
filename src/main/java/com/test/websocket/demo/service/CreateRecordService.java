@@ -10,4 +10,6 @@ public interface CreateRecordService {
     List<Header> createNewRecord(Site siteInfo);
 
     List<Header> getAllSite();
+
+    void stopMonitoring(Site siteInfo);
 }

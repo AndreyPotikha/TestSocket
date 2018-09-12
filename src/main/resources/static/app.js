@@ -13,19 +13,20 @@ function setConnected(connected) {
         $("#conversation").hide();
     }
     $("#greetings").html("");
-}
+};
 
 function connect() {
-    var socket = new SockJS('/gs-guide-websocket');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-        setConnected(true);
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/greetings', function (greeting) {
-            showGreeting(JSON.parse(greeting.body));
+        var socket = new SockJS('/gs-guide-websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/greetings', function (greeting) {
+                showGreeting(JSON.parse(greeting.body));
+            });
         });
-    });
-}
+    }
+
 
 function disconnect() {
     if (stompClient !== null) {
@@ -33,15 +34,21 @@ function disconnect() {
     }
     setConnected(false);
     console.log("Disconnected");
-}
+};
 
 function sendName() {
-
         stompClient.send("/app/hello", {}, JSON.stringify({
             'name': $("#name").val(),
             'word': $("#word").val()
         }));
-}
+};
+
+function stopMonitor() {
+        stompClient.send("/app/hello", {}, JSON.stringify({
+            'name': $("#name").val(),
+            'word': $("#word").val()
+        }));
+};
 
 function showGreeting(message) {
 
@@ -52,7 +59,6 @@ function showGreeting(message) {
     message.forEach(function(value, item) {
 
         var tempCheck = true;
-        var lengthOfTr = $('#greetings').children('tr').length;
         for (i; i < message.length; i++) {
             res.push($('.site-table').children('#site-name' + i).text());
         }
@@ -77,13 +83,15 @@ function showGreeting(message) {
                 + "</td><td id='server-status'>" + value.serverStatus
                 + "</td><td id='response-time'>" + value.time
                 + "</td><<td id='length-server'>" + value.lengthServerStatus
-                + "</td><<td id='word'>" + value.word + "</td></tr>");
+                + "</td><<td id='word'>" + value.word
+                + "</td><<td>" + "<button class='btn btn-default del' id='stop' type='submit'> STOP </button>" + "</td></tr>");
 
             $('#site-name').attr('id', 'site-name' + timeResponse);
             $('#server-status').attr('id', 'server-status' + timeResponse);
             $('#response-time').attr('id', 'response-time' + timeResponse);
             $('#length-server').attr('id', 'length-server' + timeResponse);
             $('#word').attr('id', 'word' + timeResponse);
+            $('#stop').attr('id', 'stop' + timeResponse);
             $('#site-table').attr('id', 'site-table' + timeResponse);
 
             var tempTime = +$('#response-time' + timeResponse).text();
@@ -96,7 +104,7 @@ function showGreeting(message) {
 
     });
 
-}
+};
 
 $(function () {
     $("form").on('submit', function (e) {
@@ -105,4 +113,19 @@ $(function () {
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#send" ).click(function() { sendName(); });
+});
+
+$(document).ready(function (evenet) {
+    $('#greetings').delegate('tr > td', 'click', function () {
+        var stopId = +event.target.id.replace(/\D+/g,"");
+
+        var parent = document.querySelector('#site-table' + stopId);
+        var child = parent.querySelector('td');
+
+        stompClient.send("/app/stop", {}, JSON.stringify({
+            'name': child.textContent
+        }));
+
+
+    });
 });

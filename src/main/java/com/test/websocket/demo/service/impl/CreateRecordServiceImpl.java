@@ -22,13 +22,15 @@ public class CreateRecordServiceImpl implements CreateRecordService {
 
     private List<Header> siteList = new ArrayList<>();
 
-    boolean checkLict = true;
-
     @Override
     public List<Header> createNewRecord(Site siteInfo) {
 
-        for (Header elem : siteList) {
-            if (elem.getSiteName().equals(siteInfo.getName())) {
+        boolean checkLict = true;
+
+        outer: for (Header elem : siteList) {
+            if (elem.getSiteName().equals(siteInfo.getName()) && !elem.isMonitor()) {
+                continue outer;
+            } else if (elem.getSiteName().equals(siteInfo.getName())) {
                 elem.setServerStatus(getHeaderService.getHeader(siteInfo.getName()));
                 elem.setTime((int) getTimeService.responseTime(siteInfo.getName()));
                 elem.setLengthServerStatus(siteInfo.getName().concat(siteInfo.getWord()).length());
@@ -43,7 +45,8 @@ public class CreateRecordServiceImpl implements CreateRecordService {
                     , (int) getTimeService.responseTime(siteInfo.getName())
                     , siteInfo.getName().concat(siteInfo.getWord()).length()
                     , getHeaderService.checkWord(siteInfo.getWord(), siteInfo.getName())
-                    , siteInfo.getName());
+                    , siteInfo.getName()
+                    , true);
 
             siteList.add(header);
         }
@@ -53,11 +56,24 @@ public class CreateRecordServiceImpl implements CreateRecordService {
 
     @Override
     public List<Header> getAllSite() {
-        for (Header elem : siteList) {
-            elem.setServerStatus(getHeaderService.getHeader(elem.getSiteName()));
-            elem.setTime((int) getTimeService.responseTime(elem.getSiteName()));
-            elem.setSiteName(elem.getSiteName());
+        outer: for (Header elem : siteList) {
+            if (!elem.isMonitor()) {
+                continue outer;
+            } else {
+                elem.setServerStatus(getHeaderService.getHeader(elem.getSiteName()));
+                elem.setTime((int) getTimeService.responseTime(elem.getSiteName()));
+                elem.setSiteName(elem.getSiteName());
+            }
         }
         return siteList;
+    }
+
+    @Override
+    public void stopMonitoring(Site siteInfo) {
+        for (Header elem : siteList) {
+            if (elem.getSiteName().equals(siteInfo.getName())) {
+                elem.setMonitor(false);
+            }
+        }
     }
 }

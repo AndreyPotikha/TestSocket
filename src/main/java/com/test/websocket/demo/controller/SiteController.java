@@ -23,12 +23,6 @@ import java.util.List;
 public class SiteController {
 
     @Autowired
-    private GetHeaderService getHeaderService;
-
-    @Autowired
-    private GetTimeService getTimeService;
-
-    @Autowired
     private CreateRecordService createRecordService;
 
     @Autowired
@@ -43,6 +37,12 @@ public class SiteController {
     @SendTo("/topic/greetings")
     public List<Header> createRecord(Site siteInfo) {
         return createRecordService.createNewRecord(siteInfo);
+    }
+
+    @MessageMapping("/stop")
+    @SendTo("/topic/greetings")
+    public void stopMonitoring(Site siteInfo) {
+        createRecordService.stopMonitoring(siteInfo);
     }
 }
 
