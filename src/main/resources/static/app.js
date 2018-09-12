@@ -59,8 +59,6 @@ function showGreeting(message) {
 
         res.forEach(function (value1) {
 
-            console.log("Arr" + res.length);
-
             if (value1 === value.siteName) {
 
                     $('#site-name' + iter).text(value.siteName);
@@ -68,9 +66,6 @@ function showGreeting(message) {
                     $('#response-time' + iter).text(value.time);
                     $('#length-server' + iter).text(value.lengthServerStatus);
                     $('#word' + iter).text(value.word);
-
-                console.log("`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + iter);
-                console.log(lengthOfTr);
 
                 iter++;
                 tempCheck = false;
