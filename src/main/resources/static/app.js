@@ -1,7 +1,6 @@
 var stompClient = null;
 var timeResponse = 0;
 var res = [];
-var lengthOfArr = 0;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -44,12 +43,6 @@ function sendName() {
         }));
 };
 
-function stopMonitor() {
-        stompClient.send("/app/hello", {}, JSON.stringify({
-            'name': $("#name").val(),
-            'word': $("#word").val()
-        }));
-};
 
 function showGreeting(message) {
 
