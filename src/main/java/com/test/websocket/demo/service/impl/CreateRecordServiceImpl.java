@@ -24,11 +24,9 @@ public class CreateRecordServiceImpl implements CreateRecordService {
 
         boolean checkList = true;
 
-        outer: for (Header elem : siteList) {
-            SiteResponse siteResponse = getHeaderService.getSiteResponse(elem);
-            if (elem.getSiteName().equals(siteInfo.getName()) && !elem.isMonitor()) {
-                continue outer;
-            } else if (elem.getSiteName().equals(siteInfo.getName())) {
+        for (Header elem : siteList) {
+            if (elem.getSiteName().equals(siteInfo.getName()) && elem.isMonitor()) {
+                SiteResponse siteResponse = getHeaderService.getSiteResponse(elem);
                 elem.setServerStatus(siteResponse.getHeadStatus());
                 elem.setTime((int) siteResponse.getResponseTime());
                 elem.setLengthServerStatus(siteInfo.getName().concat(siteInfo.getWord()).length());
@@ -59,11 +57,9 @@ public class CreateRecordServiceImpl implements CreateRecordService {
 
     @Override
     public List<Header> getAllSite() {
-        outer: for (Header elem : siteList) {
-            SiteResponse siteResponse = getHeaderService.getSiteResponse(elem);
-            if (!elem.isMonitor()) {
-                continue outer;
-            } else {
+        for (Header elem : siteList) {
+            if (elem.isMonitor()) {
+                SiteResponse siteResponse = getHeaderService.getSiteResponse(elem);
                 elem.setServerStatus(siteResponse.getHeadStatus());
                 elem.setTime((int) siteResponse.getResponseTime());
                 elem.setSiteName(elem.getSiteName());
