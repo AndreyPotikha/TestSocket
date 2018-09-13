@@ -34,6 +34,7 @@ function disconnect() {
     }
     setConnected(false);
     console.log("Disconnected");
+    res = [];
 };
 
 function sendName() {

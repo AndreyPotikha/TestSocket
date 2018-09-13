@@ -1,8 +1,9 @@
 package com.test.websocket.demo.service;
 
+import com.test.websocket.demo.model.Header;
+import com.test.websocket.demo.model.SiteResponse;
+
 public interface GetHeaderService {
 
-    String getHeader(String site);
-
-    boolean checkWord(String word, String site);
+    SiteResponse getSiteResponse(Header header);
 }

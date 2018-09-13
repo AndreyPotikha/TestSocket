@@ -7,17 +7,19 @@ public class Header {
     private boolean word;
     private String siteName;
     private boolean monitor;
+    private String requestWord;
 
     public Header() {
     }
 
-    public Header(String serverStatus, int time, int lengthServerStatus, boolean word, String siteName, boolean monitor) {
+    public Header(String serverStatus, int time, int lengthServerStatus, boolean word, String siteName, boolean monitor, String requestWord) {
         this.serverStatus = serverStatus;
         this.time = time;
         this.lengthServerStatus = lengthServerStatus;
         this.word = word;
         this.siteName = siteName;
         this.monitor = monitor;
+        this.requestWord = requestWord;
     }
 
     public String getServerStatus() {
@@ -72,6 +74,14 @@ public class Header {
         this.monitor = monitor;
     }
 
+    public String getRequestWord() {
+        return requestWord;
+    }
+
+    public void setRequestWord(String requestWord) {
+        this.requestWord = requestWord;
+    }
+
     @Override
     public String toString() {
         return "Header{" +
@@ -79,6 +89,9 @@ public class Header {
                 ", time=" + time +
                 ", lengthServerStatus=" + lengthServerStatus +
                 ", word=" + word +
+                ", siteName='" + siteName + '\'' +
+                ", monitor=" + monitor +
+                ", requestWord='" + requestWord + '\'' +
                 '}';
     }
 
@@ -92,17 +105,22 @@ public class Header {
         if (time != header.time) return false;
         if (lengthServerStatus != header.lengthServerStatus) return false;
         if (word != header.word) return false;
+        if (monitor != header.monitor) return false;
+        if (serverStatus != null ? !serverStatus.equals(header.serverStatus) : header.serverStatus != null)
+            return false;
         if (siteName != null ? !siteName.equals(header.siteName) : header.siteName != null) return false;
-        return serverStatus != null ? serverStatus.equals(header.serverStatus) : header.serverStatus == null;
+        return requestWord != null ? requestWord.equals(header.requestWord) : header.requestWord == null;
     }
 
     @Override
     public int hashCode() {
-        int result = siteName != null ? siteName.hashCode() : 0;
-        result = 31 * result + (serverStatus != null ? serverStatus.hashCode() : 0);
+        int result = serverStatus != null ? serverStatus.hashCode() : 0;
         result = 31 * result + time;
         result = 31 * result + lengthServerStatus;
         result = 31 * result + (word ? 1 : 0);
+        result = 31 * result + (siteName != null ? siteName.hashCode() : 0);
+        result = 31 * result + (monitor ? 1 : 0);
+        result = 31 * result + (requestWord != null ? requestWord.hashCode() : 0);
         return result;
     }
 }

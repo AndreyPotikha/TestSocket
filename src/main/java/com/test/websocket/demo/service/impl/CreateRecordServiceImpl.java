@@ -2,9 +2,9 @@ package com.test.websocket.demo.service.impl;
 
 import com.test.websocket.demo.model.Header;
 import com.test.websocket.demo.model.Site;
+import com.test.websocket.demo.model.SiteResponse;
 import com.test.websocket.demo.service.CreateRecordService;
 import com.test.websocket.demo.service.GetHeaderService;
-import com.test.websocket.demo.service.GetTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,36 +17,39 @@ public class CreateRecordServiceImpl implements CreateRecordService {
     @Autowired
     private GetHeaderService getHeaderService;
 
-    @Autowired
-    private GetTimeService getTimeService;
-
     private List<Header> siteList = new ArrayList<>();
 
     @Override
     public List<Header> createNewRecord(Site siteInfo) {
 
-        boolean checkLict = true;
+        boolean checkList = true;
 
         outer: for (Header elem : siteList) {
+            SiteResponse siteResponse = getHeaderService.getSiteResponse(elem);
             if (elem.getSiteName().equals(siteInfo.getName()) && !elem.isMonitor()) {
                 continue outer;
             } else if (elem.getSiteName().equals(siteInfo.getName())) {
-                elem.setServerStatus(getHeaderService.getHeader(siteInfo.getName()));
-                elem.setTime((int) getTimeService.responseTime(siteInfo.getName()));
+                elem.setServerStatus(siteResponse.getHeadStatus());
+                elem.setTime((int) siteResponse.getResponseTime());
                 elem.setLengthServerStatus(siteInfo.getName().concat(siteInfo.getWord()).length());
-                elem.setWord(getHeaderService.checkWord(siteInfo.getWord(), siteInfo.getName()));
+                elem.setWord(siteResponse.isCheckWord());
                 elem.setSiteName(siteInfo.getName());
-                checkLict = false;
+                checkList = false;
             }
         }
 
-        if (checkLict) {
-            Header header = new Header(getHeaderService.getHeader(siteInfo.getName())
-                    , (int) getTimeService.responseTime(siteInfo.getName())
+        if (checkList) {
+            Header tempHeader = new Header();
+            tempHeader.setSiteName(siteInfo.getName());
+            tempHeader.setRequestWord(siteInfo.getWord());
+            SiteResponse siteResponse = getHeaderService.getSiteResponse(tempHeader);
+            Header header = new Header(siteResponse.getHeadStatus()
+                    , (int) siteResponse.getResponseTime()
                     , siteInfo.getName().concat(siteInfo.getWord()).length()
-                    , getHeaderService.checkWord(siteInfo.getWord(), siteInfo.getName())
+                    , siteResponse.isCheckWord()
                     , siteInfo.getName()
-                    , true);
+                    , true
+                    , siteInfo.getWord());
 
             siteList.add(header);
         }
@@ -57,12 +60,14 @@ public class CreateRecordServiceImpl implements CreateRecordService {
     @Override
     public List<Header> getAllSite() {
         outer: for (Header elem : siteList) {
+            SiteResponse siteResponse = getHeaderService.getSiteResponse(elem);
             if (!elem.isMonitor()) {
                 continue outer;
             } else {
-                elem.setServerStatus(getHeaderService.getHeader(elem.getSiteName()));
-                elem.setTime((int) getTimeService.responseTime(elem.getSiteName()));
+                elem.setServerStatus(siteResponse.getHeadStatus());
+                elem.setTime((int) siteResponse.getResponseTime());
                 elem.setSiteName(elem.getSiteName());
+                elem.setWord(siteResponse.isCheckWord());
             }
         }
         return siteList;
